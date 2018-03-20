@@ -1,0 +1,11 @@
+A szintaktikus elemző lefordítása:
+    make
+
+(Vagy makefile használata nélkül:
+    flex calculate.l
+    bisonc++ calculate.y
+    g++ -ocalculate calculate.cc parse.cc lex.yy.cc
+)
+
+A szintaktikus elemző használata:
+    ./calculate example.calculate
