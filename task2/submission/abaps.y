@@ -5,12 +5,36 @@
 %token STMT_COMMA
 %token STMT_OPN
 %token COMMENT
+%token PROGRAM
 %token DATA
 %token TYPE
 %token TYPE_INTEGER
 %token TYPE_BOOLEAN
+%token OP_MOVE
+%token OP_READ
+%token OP_ADD
+%token OP_WRITE
+%token DIR_TO
+%token DIR_BY
+%token DIR_FROM
+%token STRUCT_IF
+%token STRUCT_WHILE
+%token STRUCT_ELSE
+%token STRUCT_ELSEIF
+%token STRUCT_ENDIF
+%token STRUCT_ENDWHILE
+%token COMP_LS
+%token COMP_GT
+%token COMP_EQ
+%token LOGIC_AND
+%token LOGIC_OR
+%token LOGIC_NOT
+%token MATH_SUB
+%token MATH_MULT
+%token MATH_DIV
 
 %token VARIABLE
+%token NUMBER
 
 %%
 
