@@ -82,6 +82,11 @@ data_decl:
 ;
 
 var_lines:
+	COMMENT var_lines
+	{
+		std::cout << "var_lines -> COMMENT var_lines" << std::endl;
+	}
+|
 	var_line var_lines
 	{
 		std::cout << "var_lines -> var_line var_lines" << std::endl;
