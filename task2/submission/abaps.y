@@ -61,11 +61,6 @@ expressions:
 		std::cout << "expressions -> data_decl expressions" << std::endl;
 	}
 |
-	COMMENT expressions
-	{
-		std::cout << "expressions -> COMMENT expressions" << std::endl;
-	}
-|
 	exp expressions
 	{
 		std::cout << "expressions -> exp expressions" << std::endl;
@@ -133,6 +128,11 @@ types:
 ;
 
 exp:
+	COMMENT
+	{
+		std::cout << "exp -> COMMENT" << std::endl;
+	}
+|
 	OP_MOVE VARIABLE to_var STMT_DOT
 	{
 		std::cout << "exp -> OP_MOVE variable to_var STMT_DOT" << std::endl;
