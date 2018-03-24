@@ -39,9 +39,14 @@
 %%
 
 start:
-	expressions
+	prog_decl expressions
 	{
-		std::cout << "start -> expressions" << std::endl;
+		std::cout << "start -> prog_decl expressions" << std::endl;
+	}
+|
+	comments prog_decl expressions
+	{
+		std::cout << "start -> comments prog_decl expressions" << std::endl;
 	}
 ;
 
@@ -49,11 +54,6 @@ expressions:
 	// null
 	{
 		std::cout << "expressions -> null" << std::endl;
-	}
-|
-	prog_decl expressions
-	{
-		std::cout << "expressions -> prog_decl expressions" << std::endl;
 	}
 |
 	data_decl expressions
@@ -64,6 +64,23 @@ expressions:
 	exp expressions
 	{
 		std::cout << "expressions -> exp expressions" << std::endl;
+	}
+|
+	comments expressions
+	{
+		std::cout << "expressions -> comments expressions" << std::endl;
+	}
+;
+
+expressions_plus:
+	comments exp expressions
+	{
+		std::cout << "expressions_plus -> comments exp expressions" << std::endl;
+	}
+|
+	exp expressions
+	{
+		std::cout << "expressions_plus -> exp expressions" << std::endl;
 	}
 ;
 
@@ -82,7 +99,7 @@ data_decl:
 ;
 
 var_lines:
-	COMMENT var_lines
+	comments var_lines
 	{
 		std::cout << "var_lines -> COMMENT var_lines" << std::endl;
 	}
@@ -131,12 +148,19 @@ types:
 	}
 ;
 
-exp:
+comments:
 	COMMENT
 	{
-		std::cout << "exp -> COMMENT" << std::endl;
+		std::cout << "comments -> COMMENT" << std::endl;
 	}
 |
+	COMMENT comments
+	{
+		std::cout << "comments -> COMMENT comments" << std::endl;
+	}
+;
+
+exp:
 	OP_MOVE value to_var STMT_DOT
 	{
 		std::cout << "exp -> OP_MOVE value to_var STMT_DOT" << std::endl;
@@ -217,9 +241,9 @@ struct_if:
 ;
 
 logic_body:
-	logic_exp STMT_DOT expressions
+	logic_exp STMT_DOT expressions_plus
 	{
-		std::cout << "logic_body -> logic_exp STMT_DOT expressions" << std::endl;
+		std::cout << "logic_body -> logic_exp STMT_DOT expressions_plus" << std::endl;
 	}
 ;
 
