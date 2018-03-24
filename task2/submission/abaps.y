@@ -23,15 +23,15 @@
 %token STRUCT_ELSEIF
 %token STRUCT_ENDIF
 %token STRUCT_ENDWHILE
-%token COMP_LS
-%token COMP_GT
-%token COMP_EQ
-%token LOGIC_AND
-%token LOGIC_OR
-%token LOGIC_NOT
-%token MATH_SUB
-%token MATH_MULT
-%token MATH_DIV
+%left COMP_LS
+%left COMP_GT
+%left COMP_EQ
+%left LOGIC_AND
+%left LOGIC_OR
+%right LOGIC_NOT
+%left MATH_SUB
+%left MATH_MULT
+%left MATH_DIV
 
 %token VARIABLE
 %token NUMBER
@@ -65,7 +65,6 @@ expressions:
 	{
 		std::cout << "expressions -> exp expressions" << std::endl;
 	}
-
 ;
 
 prog_decl:
@@ -143,14 +142,29 @@ exp:
 		std::cout << "exp -> OP_MOVE NUMBER to_var STMT_DOT" << std::endl;
 	}
 |
-	OP_READ to_var
+	OP_READ to_var STMT_DOT
 	{
-		std::cout << "exp -> OP_READ to_var" << std::endl;
+		std::cout << "exp -> OP_READ to_var STMT_DOT" << std::endl;
 	}
 |
-	OP_WRITE VARIABLE
+	OP_WRITE VARIABLE STMT_DOT
 	{
-		std::cout << "exp -> OP_WRITE VARIABLE" << std::endl;
+		std::cout << "exp -> OP_WRITE VARIABLE STMT_DOT" << std::endl;
+	}
+|
+	OP_ADD VARIABLE to_var STMT_DOT
+	{
+		std::cout << "exp -> OP_ADD VARIABLE to_var STMT_DOT" << std::endl;
+	}
+|
+	struct_while
+	{
+		std::cout << "exp -> struct_while" << std::endl;
+	}
+|
+	struct_if
+	{
+		std::cout << "exp -> struct_if" << std::endl;
 	}
 ;
 
@@ -161,4 +175,73 @@ to_var:
 	}
 ;
 
+struct_while:
+	STRUCT_WHILE VARIABLE STMT_DOT expressions STRUCT_ENDWHILE STMT_DOT
+	{
+		std::cout << "while -> STRUCT_WHILE exp STMT_DOT expressions STRUCT_ENDWHILE STMT_DOT" << std::endl;
+	}
+;
 
+struct_if:
+	STRUCT_IF logic_exp STMT_DOT expressions STRUCT_ENDIF STMT_DOT
+	{
+		std::cout << "struct_if -> STRUCT_IF logic_exp STMT_DOT expressions STRUCT_ENDIF STMT_DOT" << std::endl;
+	}
+;
+
+logic_exp:
+	logic_exp logic_bin_op logic_exp
+	{
+		std::cout << "logic_exp -> logic_exp logic_bin_op logic_exp" << std::endl;
+	}
+|
+	logic_un_op logic_exp
+	{
+		std::cout << "logic_exp -> logic_un_op logic_exp" << std::endl;
+	}
+|
+	VARIABLE
+	{
+		std::cout << "logic_exp -> VARIABLE" << std::endl;
+	}
+|
+	NUMBER
+	{
+		std::cout << "logic_exp -> NUMBER" << std::endl;
+	}
+;
+
+
+logic_un_op:
+	LOGIC_NOT
+	{
+		std::cout << "logic_un_op -> LOGIC_NOT" << std::endl;
+	}
+;
+
+logic_bin_op:
+	LOGIC_AND
+	{
+		std::cout << "logic_bin_op -> LOGIC_AND" << std::endl;
+	}
+|
+	LOGIC_OR
+	{
+		std::cout << "logic_bin_op -> LOGIC_OR" << std::endl;
+	}
+|
+	COMP_LS
+	{
+		std::cout << "logic_bin_op -> COMP_LS" << std::endl;
+	}
+|
+	COMP_GT
+	{
+		std::cout << "logic_bin_op -> COMP_GT" << std::endl;
+	}
+|
+	COMP_EQ
+	{
+		std::cout << "logic_bin_op -> COMP_EQ" << std::endl;
+	}
+;
