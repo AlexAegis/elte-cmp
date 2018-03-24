@@ -137,14 +137,9 @@ exp:
 		std::cout << "exp -> COMMENT" << std::endl;
 	}
 |
-	OP_MOVE VARIABLE to_var STMT_DOT
+	OP_MOVE value to_var STMT_DOT
 	{
-		std::cout << "exp -> OP_MOVE variable to_var STMT_DOT" << std::endl;
-	}
-|
-	OP_MOVE NUMBER to_var STMT_DOT
-	{
-		std::cout << "exp -> OP_MOVE NUMBER to_var STMT_DOT" << std::endl;
+		std::cout << "exp -> OP_MOVE value to_var STMT_DOT" << std::endl;
 	}
 |
 	OP_READ to_var STMT_DOT
@@ -157,9 +152,24 @@ exp:
 		std::cout << "exp -> OP_WRITE VARIABLE STMT_DOT" << std::endl;
 	}
 |
-	OP_ADD VARIABLE to_var STMT_DOT
+	OP_ADD value to_var STMT_DOT
 	{
-		std::cout << "exp -> OP_ADD VARIABLE to_var STMT_DOT" << std::endl;
+		std::cout << "exp -> OP_ADD value to_var STMT_DOT" << std::endl;
+	}
+|
+	MATH_SUB value DIR_FROM VARIABLE STMT_DOT
+	{
+		std::cout << "exp -> MATH_SUB value DIR_FROM VARIABLE STMT_DOT" << std::endl;
+	}
+|
+	MATH_MULT VARIABLE DIR_BY value STMT_DOT
+	{
+		std::cout << "exp -> MATH_MULT VARIABLE DIR_BY value STMT_DOT" << std::endl;
+	}
+|
+	MATH_DIV VARIABLE DIR_BY value STMT_DOT
+	{
+		std::cout << "exp -> MATH_DIV VARIABLE DIR_BY value STMT_DOT" << std::endl;
 	}
 |
 	struct_while
@@ -170,6 +180,18 @@ exp:
 	struct_if
 	{
 		std::cout << "exp -> struct_if" << std::endl;
+	}
+;
+
+value:
+	VARIABLE
+	{
+		std::cout << "value -> VARIABLE" << std::endl;
+	}
+|
+	NUMBER
+	{
+		std::cout << "value -> NUMBER" << std::endl;
 	}
 ;
 
