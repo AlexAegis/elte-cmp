@@ -46,63 +46,119 @@ start:
 ;
 
 expressions:
-	// ures
+	// null
 	{
-		std::cout << "expressions -> epszilon" << std::endl;
+		std::cout << "expressions -> null" << std::endl;
 	}
 |
-	DATA d1
+	prog_decl expressions
 	{
-		std::cout << "expressions -> DATA" << std::endl;
+		std::cout << "expressions -> prog_decl expressions" << std::endl;
+	}
+|
+	data_decl expressions
+	{
+		std::cout << "expressions -> data_decl expressions" << std::endl;
 	}
 |
 	COMMENT expressions
 	{
 		std::cout << "expressions -> COMMENT expressions" << std::endl;
 	}
+|
+	exp expressions
+	{
+		std::cout << "expressions -> exp expressions" << std::endl;
+	}
+
 ;
 
-d1:
-	STMT_OPN d2
+prog_decl:
+	PROGRAM VARIABLE STMT_DOT
 	{
-		std::cout << "d1 -> STMT_OPN d2" << std::endl;
+		std::cout << "prog_decl -> PROGRAM VARIABLE STMT_DOT" << std::endl;
 	}
 ;
 
-d2:
-	VARIABLE dl1
+data_decl:
+	DATA STMT_OPN var_lines
 	{
-		std::cout << "d2 -> VARIABLE dl1" << std::endl;
+		std::cout << "data_decl -> DATA_STMT_OPN var_lines" << std::endl;
 	}
 ;
 
-dl1:
-	TYPE dl2
+var_lines:
+	var_line var_lines
 	{
-		std::cout << "dl1 -> TYPE dl2" << std::endl;
-	}
-;
-
-dl2:
-	TYPE_INTEGER dl3
-	{
-		std::cout << "dl2 -> TYPE_INTEGER dl3" << std::endl;
+		std::cout << "var_lines -> var_line var_lines" << std::endl;
 	}
 |
-	TYPE_BOOLEAN dl3
+	var_last_line
 	{
-		std::cout << "dl2 -> TYPE_BOOLEAN dl3" << std::endl;
+		std::cout << "var_line -> var_last_line" << std::endl;
 	}
 ;
 
-dl3:
-	STMT_COMMA dl2
+var_line_core:
+	VARIABLE TYPE types
 	{
-		std::cout << "dl3 -> STMT_COMMA dl2" << std::endl;
-	}
-|
-	STMT_DOT expressions
-	{
-		std::cout << "dl3 -> STMT_DOT expressions" << std::endl;
+		std::cout << "var_line -> VARIABLE TYPE types" << std::endl;
 	}
 ;
+
+var_line:
+	var_line_core STMT_COMMA
+	{
+		std::cout << "var_line -> var_line_core STMT_COMMA" << std::endl;
+	}
+;
+
+var_last_line:
+	var_line_core STMT_DOT
+	{
+		std::cout << "var_last_line -> var_line_core STMT_DOT" << std::endl;
+	}
+;
+
+types:
+	TYPE_INTEGER
+	{
+		std::cout << "types -> TYPE_INTEGER" << std::endl;
+	}
+|
+	TYPE_BOOLEAN
+	{
+		std::cout << "types -> TYPE_BOOLEAN" << std::endl;
+	}
+;
+
+exp:
+	OP_MOVE VARIABLE to_var STMT_DOT
+	{
+		std::cout << "exp -> OP_MOVE variable to_var STMT_DOT" << std::endl;
+	}
+|
+	OP_MOVE NUMBER to_var STMT_DOT
+	{
+		std::cout << "exp -> OP_MOVE NUMBER to_var STMT_DOT" << std::endl;
+	}
+|
+	OP_READ to_var
+	{
+		std::cout << "exp -> OP_READ to_var" << std::endl;
+	}
+|
+	OP_WRITE VARIABLE
+	{
+		std::cout << "exp -> OP_WRITE VARIABLE" << std::endl;
+	}
+;
+
+to_var:
+	DIR_TO VARIABLE
+	{
+		std::cout << "to_var -> DIR_TO variable" << std::endl;
+	}
+;
+
+
