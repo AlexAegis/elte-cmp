@@ -147,7 +147,7 @@ exp:
 		std::cout << "exp -> OP_READ to_var STMT_DOT" << std::endl;
 	}
 |
-	OP_WRITE VARIABLE STMT_DOT
+	OP_WRITE value STMT_DOT
 	{
 		std::cout << "exp -> OP_WRITE VARIABLE STMT_DOT" << std::endl;
 	}
@@ -210,9 +210,57 @@ struct_while:
 ;
 
 struct_if:
-	STRUCT_IF logic_exp STMT_DOT expressions STRUCT_ENDIF STMT_DOT
+	STRUCT_IF logic_body if_body STRUCT_ENDIF STMT_DOT
 	{
-		std::cout << "struct_if -> STRUCT_IF logic_exp STMT_DOT expressions STRUCT_ENDIF STMT_DOT" << std::endl;
+		std::cout << "struct_if -> STRUCT_IF logic_body if_body STRUCT_ENDIF STMT_DOT" << std::endl;
+	}
+;
+
+logic_body:
+	logic_exp STMT_DOT expressions
+	{
+		std::cout << "logic_body -> logic_exp STMT_DOT expressions" << std::endl;
+	}
+;
+
+if_body:
+	//null
+	{
+		std::cout << "if_body -> null" << std::endl;
+	}
+|
+	if_else
+	{
+		std::cout << "if_body -> if_else" << std::endl;
+	}
+|
+	if_elseif
+	{
+		std::cout << "if_body -> if_elseif" << std::endl;
+	}
+;
+
+if_else:
+	STRUCT_ELSE STMT_DOT expressions
+	{
+		std::cout << "if_else -> STRUCT_ELSE expressions" << std::endl;
+	}
+;
+
+if_elseif:
+	STRUCT_ELSEIF logic_body if_elseif
+	{
+		std::cout << "if_elseif -> STRUCT_ELSEIF logic_body if_elseif" << std::endl;
+	}
+|
+	STRUCT_ELSEIF logic_body
+	{
+		std::cout << "if_elseif -> STRUCT_ELSEIF logic_body" << std::endl;
+	}
+|
+	STRUCT_ELSEIF logic_body if_else
+	{
+		std::cout << "if_elseif -> STRUCT_ELSEIF logic_body if_else" << std::endl;
 	}
 ;
 
