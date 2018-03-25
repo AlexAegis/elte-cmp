@@ -23,15 +23,13 @@
 %token STRUCT_ELSEIF
 %token STRUCT_ENDIF
 %token STRUCT_ENDWHILE
-%left COMP_LS
-%left COMP_GT
+
+%left LOGIC_AND LOGIC_OR
 %left COMP_EQ
-%left LOGIC_AND
-%left LOGIC_OR
+%left COMP_LS COMP_GT
+%left MATH_SUB MATH_MULT MATH_DIV
+
 %right LOGIC_NOT
-%left MATH_SUB
-%left MATH_MULT
-%left MATH_DIV
 
 %token VARIABLE
 %token NUMBER
@@ -149,14 +147,21 @@ types:
 ;
 
 comments:
-	COMMENT
+	COMMENT more_comments
 	{
-		std::cout << "comments -> COMMENT" << std::endl;
+		std::cout << "comments -> COMMENT more_comments" << std::endl;
+	}
+;
+
+more_comments:
+	// null
+	{
+		std::cout << "more_comments -> null" << std::endl;
 	}
 |
-	COMMENT comments
+	comments
 	{
-		std::cout << "comments -> COMMENT comments" << std::endl;
+		std::cout << "more_comments -> comments" << std::endl;
 	}
 ;
 
@@ -267,7 +272,7 @@ if_body:
 if_else:
 	STRUCT_ELSE STMT_DOT expressions
 	{
-		std::cout << "if_else -> STRUCT_ELSE expressions" << std::endl;
+		std::cout << "if_else -> STRUCT_ELSE STMT_DOT expressions" << std::endl;
 	}
 ;
 
@@ -289,24 +294,26 @@ if_elseif:
 ;
 
 logic_exp:
-	logic_exp logic_bin_op logic_exp
+	value more_logic_exp
 	{
-		std::cout << "logic_exp -> logic_exp logic_bin_op logic_exp" << std::endl;
+		std::cout << "logic_exp -> value more_logic_exp" << std::endl;
 	}
 |
 	logic_un_op logic_exp
 	{
 		std::cout << "logic_exp -> logic_un_op logic_exp" << std::endl;
 	}
-|
-	VARIABLE
+;
+
+more_logic_exp:
+	// null
 	{
-		std::cout << "logic_exp -> VARIABLE" << std::endl;
+		std::cout << "more_logic_exp -> null" << std::endl;
 	}
 |
-	NUMBER
+	logic_bin_op logic_exp
 	{
-		std::cout << "logic_exp -> NUMBER" << std::endl;
+		std::cout << "more_logic_exp -> logic_bin_op logic_exp" << std::endl;
 	}
 ;
 
