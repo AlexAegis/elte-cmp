@@ -735,7 +735,7 @@ case 4:
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
 #line 15 "abaps.l"
-return Parser::COMMENT;
+std::cout << "Comment, ignored." << std::endl;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -1868,5 +1868,6 @@ void yyfree (void * ptr )
 #define YYTABLES_NAME "yytables"
 
 #line 54 "abaps.l"
+
 
 

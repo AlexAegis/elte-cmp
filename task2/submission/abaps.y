@@ -1,10 +1,10 @@
 %baseclass-preinclude <iostream>
 %lsp-needed
 
+
 %token STMT_DOT
 %token STMT_COMMA
 %token STMT_OPN
-%token COMMENT
 %token PROGRAM
 %token DATA
 %token TYPE
@@ -41,11 +41,6 @@ start:
 	{
 		std::cout << "start -> prog_decl expressions" << std::endl;
 	}
-|
-	comments prog_decl expressions
-	{
-		std::cout << "start -> comments prog_decl expressions" << std::endl;
-	}
 ;
 
 expressions:
@@ -63,19 +58,9 @@ expressions:
 	{
 		std::cout << "expressions -> exp expressions" << std::endl;
 	}
-|
-	comments expressions
-	{
-		std::cout << "expressions -> comments expressions" << std::endl;
-	}
 ;
 
 expressions_plus:
-	comments exp expressions
-	{
-		std::cout << "expressions_plus -> comments exp expressions" << std::endl;
-	}
-|
 	exp expressions
 	{
 		std::cout << "expressions_plus -> exp expressions" << std::endl;
@@ -97,11 +82,6 @@ data_decl:
 ;
 
 var_lines:
-	comments var_lines
-	{
-		std::cout << "var_lines -> COMMENT var_lines" << std::endl;
-	}
-|
 	var_line var_lines
 	{
 		std::cout << "var_lines -> var_line var_lines" << std::endl;
@@ -143,25 +123,6 @@ types:
 	TYPE_BOOLEAN
 	{
 		std::cout << "types -> TYPE_BOOLEAN" << std::endl;
-	}
-;
-
-comments:
-	COMMENT more_comments
-	{
-		std::cout << "comments -> COMMENT more_comments" << std::endl;
-	}
-;
-
-more_comments:
-	// null
-	{
-		std::cout << "more_comments -> null" << std::endl;
-	}
-|
-	comments
-	{
-		std::cout << "more_comments -> comments" << std::endl;
 	}
 ;
 
@@ -316,7 +277,6 @@ more_logic_exp:
 		std::cout << "more_logic_exp -> logic_bin_op logic_exp" << std::endl;
 	}
 ;
-
 
 logic_un_op:
 	LOGIC_NOT

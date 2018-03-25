@@ -12,7 +12,7 @@ WS						[ \t\n]
 \.						return Parser::STMT_DOT;
 ,						return Parser::STMT_COMMA;
 :						return Parser::STMT_OPN;
-^\*.*$					return Parser::COMMENT;
+^\*.*$					std::cout << "Comment, ignored." << std::endl;
 PROGRAM					return Parser::PROGRAM;
 DATA					return Parser::DATA;
 TYPE					return Parser::TYPE;
