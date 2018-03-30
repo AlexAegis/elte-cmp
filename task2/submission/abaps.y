@@ -10,6 +10,8 @@
 %token TYPE
 %token TYPE_INTEGER
 %token TYPE_BOOLEAN
+%token BOOLEAN_TRUE
+%token BOOLEAN_FALSE
 %token OP_MOVE
 %token OP_READ
 %token OP_ADD
@@ -23,6 +25,8 @@
 %token STRUCT_ELSEIF
 %token STRUCT_ENDIF
 %token STRUCT_ENDWHILE
+%token PAR_OPN
+%token PAR_CLS
 
 %left LOGIC_AND LOGIC_OR
 %left COMP_EQ
@@ -37,33 +41,28 @@
 %%
 
 start:
-	prog_decl expressions
+	prog_decl data_decl statements
 	{
-		std::cout << "start -> prog_decl expressions" << std::endl;
+		std::cout << "start -> prog_decl data_decl statements" << std::endl;
 	}
 ;
 
-expressions:
+statements:
 	// null
 	{
-		std::cout << "expressions -> null" << std::endl;
+		std::cout << "statements -> null" << std::endl;
 	}
 |
-	data_decl expressions
+	statement statements
 	{
-		std::cout << "expressions -> data_decl expressions" << std::endl;
-	}
-|
-	exp expressions
-	{
-		std::cout << "expressions -> exp expressions" << std::endl;
+		std::cout << "statements -> statement statements" << std::endl;
 	}
 ;
 
-expressions_plus:
-	exp expressions
+statements_plus:
+	statement statements
 	{
-		std::cout << "expressions_plus -> exp expressions" << std::endl;
+		std::cout << "statements_plus -> statement statements" << std::endl;
 	}
 ;
 
@@ -75,6 +74,11 @@ prog_decl:
 ;
 
 data_decl:
+	//null
+	{
+		std::cout << "data_decl -> null" << std::endl;
+	}
+|
 	DATA STMT_OPN var_lines
 	{
 		std::cout << "data_decl -> DATA_STMT_OPN var_lines" << std::endl;
@@ -126,50 +130,99 @@ types:
 	}
 ;
 
-exp:
-	OP_MOVE value to_var STMT_DOT
+statement:
+	statement_move
 	{
-		std::cout << "exp -> OP_MOVE value to_var STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_move" << std::endl;
 	}
 |
-	OP_READ to_var STMT_DOT
+	statement_read
 	{
-		std::cout << "exp -> OP_READ to_var STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_read" << std::endl;
 	}
 |
-	OP_WRITE value STMT_DOT
+	statement_write
 	{
-		std::cout << "exp -> OP_WRITE VARIABLE STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_write" << std::endl;
 	}
 |
-	OP_ADD value to_var STMT_DOT
+	statement_math_add
 	{
-		std::cout << "exp -> OP_ADD value to_var STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_math_add" << std::endl;
 	}
 |
-	MATH_SUB value DIR_FROM VARIABLE STMT_DOT
+	statement_math_sub
 	{
-		std::cout << "exp -> MATH_SUB value DIR_FROM VARIABLE STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_math_sub" << std::endl;
 	}
 |
-	MATH_MULT VARIABLE DIR_BY value STMT_DOT
+	statement_math_mult
 	{
-		std::cout << "exp -> MATH_MULT VARIABLE DIR_BY value STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_math_mult" << std::endl;
 	}
 |
-	MATH_DIV VARIABLE DIR_BY value STMT_DOT
+	statement_math_div
 	{
-		std::cout << "exp -> MATH_DIV VARIABLE DIR_BY value STMT_DOT" << std::endl;
+		std::cout << "statement -> statement_math_div" << std::endl;
 	}
 |
 	struct_while
 	{
-		std::cout << "exp -> struct_while" << std::endl;
+		std::cout << "statement -> struct_while" << std::endl;
 	}
 |
 	struct_if
 	{
-		std::cout << "exp -> struct_if" << std::endl;
+		std::cout << "statement -> struct_if" << std::endl;
+	}
+;
+
+statement_move:
+	OP_MOVE expression to_var STMT_DOT
+	{
+		std::cout << "statement_move -> OP_MOVE value to_var STMT_DOT" << std::endl;
+	}
+;
+
+statement_read:
+	OP_READ to_var STMT_DOT
+	{
+		std::cout << "statement_read -> OP_READ to_var STMT_DOT" << std::endl;
+	}
+;
+
+statement_write:
+	OP_WRITE expression STMT_DOT
+	{
+		std::cout << "statement_write -> OP_WRITE VARIABLE STMT_DOT" << std::endl;
+	}
+;
+
+statement_math_add:
+	OP_ADD expression to_var STMT_DOT
+	{
+		std::cout << "statement_math_add -> OP_ADD value to_var STMT_DOT" << std::endl;
+	}
+;
+
+statement_math_sub:
+	MATH_SUB expression DIR_FROM VARIABLE STMT_DOT
+	{
+		std::cout << "statement_math_sub -> MATH_SUB value DIR_FROM VARIABLE STMT_DOT" << std::endl;
+	}
+;
+
+statement_math_mult:
+	MATH_MULT VARIABLE DIR_BY value STMT_DOT
+	{
+		std::cout << "statement_math_mult -> MATH_MULT VARIABLE DIR_BY value STMT_DOT" << std::endl;
+	}
+;
+
+statement_math_div:
+	MATH_DIV VARIABLE DIR_BY value STMT_DOT
+	{
+		std::cout << "statement_math_div -> MATH_DIV VARIABLE DIR_BY value STMT_DOT" << std::endl;
 	}
 ;
 
@@ -193,9 +246,9 @@ to_var:
 ;
 
 struct_while:
-	STRUCT_WHILE VARIABLE STMT_DOT expressions STRUCT_ENDWHILE STMT_DOT
+	STRUCT_WHILE VARIABLE STMT_DOT statements STRUCT_ENDWHILE STMT_DOT
 	{
-		std::cout << "while -> STRUCT_WHILE exp STMT_DOT expressions STRUCT_ENDWHILE STMT_DOT" << std::endl;
+		std::cout << "while -> STRUCT_WHILE statement STMT_DOT statements STRUCT_ENDWHILE STMT_DOT" << std::endl;
 	}
 ;
 
@@ -207,9 +260,9 @@ struct_if:
 ;
 
 logic_body:
-	logic_exp STMT_DOT expressions_plus
+	expression STMT_DOT statements_plus
 	{
-		std::cout << "logic_body -> logic_exp STMT_DOT expressions_plus" << std::endl;
+		std::cout << "logic_body -> expression STMT_DOT statements_plus" << std::endl;
 	}
 ;
 
@@ -231,9 +284,9 @@ if_body:
 ;
 
 if_else:
-	STRUCT_ELSE STMT_DOT expressions
+	STRUCT_ELSE STMT_DOT statements
 	{
-		std::cout << "if_else -> STRUCT_ELSE STMT_DOT expressions" << std::endl;
+		std::cout << "if_else -> STRUCT_ELSE STMT_DOT statements" << std::endl;
 	}
 ;
 
@@ -254,60 +307,61 @@ if_elseif:
 	}
 ;
 
-logic_exp:
-	value more_logic_exp
+expression:
+	value
 	{
-		std::cout << "logic_exp -> value more_logic_exp" << std::endl;
+		std::cout << "expression -> value" << std::endl;
 	}
 |
-	logic_un_op logic_exp
+	literal_boolean
 	{
-		std::cout << "logic_exp -> logic_un_op logic_exp" << std::endl;
+		std::cout << "expression -> literal_boolean" << std::endl;
+	}
+|
+	PAR_OPN expression PAR_CLS
+	{
+		std::cout << "expression -> PAR_CLS expression PAR_CLS" << std::endl;
+	}
+|
+	LOGIC_NOT expression
+	{
+		std::cout << "expression -> LOGIC_NOT expression" << std::endl;
+	}
+|
+	expression LOGIC_AND expression
+	{
+		std::cout << "expression -> expression LOGIC_AND expression" << std::endl;
+	}
+|
+	expression LOGIC_OR expression
+	{
+		std::cout << "logic_bin_op -> expression LOGIC_OR expression" << std::endl;
+	}
+|
+	expression COMP_LS expression
+	{
+		std::cout << "logic_bin_op -> expression COMP_LS expression" << std::endl;
+	}
+|
+	expression COMP_GT expression
+	{
+		std::cout << "logic_bin_op -> expression COMP_GT expression" << std::endl;
+	}
+|
+	expression COMP_EQ expression
+	{
+		std::cout << "logic_bin_op -> expression COMP_EQ expression" << std::endl;
 	}
 ;
 
-more_logic_exp:
-	// null
+literal_boolean:
+	BOOLEAN_FALSE
 	{
-		std::cout << "more_logic_exp -> null" << std::endl;
+		std::cout << "literal_boolean -> BOOLEAN_FALSE" << std::endl;
 	}
 |
-	logic_bin_op logic_exp
+	BOOLEAN_TRUE
 	{
-		std::cout << "more_logic_exp -> logic_bin_op logic_exp" << std::endl;
-	}
-;
-
-logic_un_op:
-	LOGIC_NOT
-	{
-		std::cout << "logic_un_op -> LOGIC_NOT" << std::endl;
-	}
-;
-
-logic_bin_op:
-	LOGIC_AND
-	{
-		std::cout << "logic_bin_op -> LOGIC_AND" << std::endl;
-	}
-|
-	LOGIC_OR
-	{
-		std::cout << "logic_bin_op -> LOGIC_OR" << std::endl;
-	}
-|
-	COMP_LS
-	{
-		std::cout << "logic_bin_op -> COMP_LS" << std::endl;
-	}
-|
-	COMP_GT
-	{
-		std::cout << "logic_bin_op -> COMP_GT" << std::endl;
-	}
-|
-	COMP_EQ
-	{
-		std::cout << "logic_bin_op -> COMP_EQ" << std::endl;
+		std::cout << "literal_boolean -> BOOLEAN_TRUE" << std::endl;
 	}
 ;
