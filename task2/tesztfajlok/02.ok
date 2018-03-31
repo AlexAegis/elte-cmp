@@ -5,7 +5,8 @@
 * Osszegzes ?*!
 DATA            :
 * Osszegzes
-i TYPE I    ,s     TYPE I,
+i TYPE B    ,
+s     TYPE I,
 * Osszegzes
 
         more TYPE B     .

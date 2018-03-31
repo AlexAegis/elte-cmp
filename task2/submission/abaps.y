@@ -213,16 +213,16 @@ statement_math_sub:
 ;
 
 statement_math_mult:
-	MATH_MULT VARIABLE DIR_BY value STMT_DOT
+	MATH_MULT VARIABLE DIR_BY expression STMT_DOT
 	{
-		std::cout << "statement_math_mult -> MATH_MULT VARIABLE DIR_BY value STMT_DOT" << std::endl;
+		std::cout << "statement_math_mult -> MATH_MULT VARIABLE DIR_BY expression STMT_DOT" << std::endl;
 	}
 ;
 
 statement_math_div:
-	MATH_DIV VARIABLE DIR_BY value STMT_DOT
+	MATH_DIV VARIABLE DIR_BY expression STMT_DOT
 	{
-		std::cout << "statement_math_div -> MATH_DIV VARIABLE DIR_BY value STMT_DOT" << std::endl;
+		std::cout << "statement_math_div -> MATH_DIV VARIABLE DIR_BY expression STMT_DOT" << std::endl;
 	}
 ;
 
