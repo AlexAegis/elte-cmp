@@ -6,8 +6,13 @@
 %token TRUE;
 %token FALSE;
 %token NUMBER;
-%token IDENT;
+%token <szoveg> IDENT;
 %token ASSIGN;
+
+%union
+{
+  std::string *szoveg;
+}
 
 %%
 
@@ -22,7 +27,10 @@ declarations:
 ;
 
 declaration:
-    NATURAL IDENT
+    NATURAL IDENT 
+    {
+       std::cout << *$2 << std::endl; 
+    }
 |
     BOOLEAN IDENT
 ;
