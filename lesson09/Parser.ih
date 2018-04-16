@@ -16,11 +16,12 @@ inline void Parser::error(char const *msg)
 // $insert lex
 inline int Parser::lex()
 {
+    int ret = lexer.yylex();  
 	if( ret == IDENT )
 	{
 		d_val__.szoveg = new std::string(lexer.YYText());
 	}
-    int ret = lexer.yylex();
+    
     d_loc__.first_line = lexer.lineno();
     return ret;
 }
