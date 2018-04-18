@@ -40,7 +40,6 @@
 %token <value> VARIABLE
 %token <value> NUMBER
 
-%type <value> value;
 %type <type> types;
 %type <type> expression;
 
@@ -114,7 +113,7 @@ var_line_core:
 	VARIABLE TYPE types
 	{
 		std::cout << "var_line -> VARIABLE TYPE TYPE_INTEGER" << std::endl;
-/*
+
         
 		if (symbols.count(*$1) > 0)
 		{
@@ -125,8 +124,9 @@ var_line_core:
 		}
 		
 		symbols[*$1] = VarData(d_loc__.first_line, *$3);
+
+		std::cout << "var_line -> VARIABLE (" << symbols[*$1] << ") TYPE TYPE_INTEGER" << std::endl;
 		
-		delete $1;*/
 	}
 ;
 
@@ -208,7 +208,7 @@ statement:
 statement_move:
 	OP_MOVE expression to_var STMT_DOT
 	{
-		std::cout << "statement_move -> OP_MOVE value to_var STMT_DOT" << std::endl;
+		std::cout << "statement_move -> OP_MOVE expression to_var STMT_DOT" << std::endl;
 	}
 ;
 
@@ -229,14 +229,14 @@ statement_write:
 statement_math_add:
 	OP_ADD expression to_var STMT_DOT
 	{
-		std::cout << "statement_math_add -> OP_ADD value to_var STMT_DOT" << std::endl;
+		std::cout << "statement_math_add -> OP_ADD expression to_var STMT_DOT" << std::endl;
 	}
 ;
 
 statement_math_sub:
 	MATH_SUB expression DIR_FROM VARIABLE STMT_DOT
 	{
-		std::cout << "statement_math_sub -> MATH_SUB value DIR_FROM VARIABLE STMT_DOT" << std::endl;
+		std::cout << "statement_math_sub -> MATH_SUB expression DIR_FROM VARIABLE STMT_DOT" << std::endl;
 	}
 ;
 
@@ -254,44 +254,11 @@ statement_math_div:
 	}
 ;
 
-value:
-	VARIABLE
-	{
-		std::cout << "value -> VARIABLE" << std::endl;
-
-		if(symbols.count(*$1) == 0)
-		{
-			std::stringstream ss;
-			ss << " Undeclared variable: " << *$1;
-			error(ss.str().c_str());
-		}
-		
-		$$ = $1;
-
-		delete $1;
-	}
-|
-	NUMBER
-	{
-		std::cout << "value -> NUMBER" << std::endl;
-		
-		if(symbols.count(*$1) == 0)
-		{
-			std::stringstream ss;
-			ss << " Undeclared variable: " << *$1;
-			error(ss.str().c_str());
-		}
-		
-		$$ = $1;
-
-		delete $1;
-	}
-;
-
 to_var:
 	DIR_TO VARIABLE
 	{
-		std::cout << "to_var -> DIR_TO variable" << std::endl;
+		std::cout << "to_var -> DIR_TO VARIABLE" << std::endl;
+		//$$ = new Type(symbols[*$2].type);
 	}
 ;
 
@@ -358,60 +325,81 @@ if_elseif:
 ;
 
 expression:
-	value
-	{/*
-		std::cout << "expression -> value" << std::endl;
+	VARIABLE
+	{
+		std::cout << "expression -> VARIABLE" << std::endl;
+
+		// TODO only if variable is declared as boolean
+		
+		$$ = new Type(symbols[*$1].type);
+	}
+|
+	NUMBER
+	{
+		std::cout << "expression -> NUMBER" << std::endl;
+		/*
 		if(symbols.count(*$1) == 0)
 		{
 			std::stringstream ss;
 			ss << " Undeclared variable: " << *$1;
 			error(ss.str().c_str());
 		}
-		
-		$$ = new Type(symbols[*$1].type);
-
-		delete $1;*/
+		*/
+		$$ = new Type(Integer);
 	}
 |
 	literal_boolean
 	{
 		std::cout << "expression -> literal_boolean" << std::endl;
-		$$ = new Type(Boolean);
+		//$$ = $1;
 	}
 |
 	PAR_OPN expression PAR_CLS
 	{
 		std::cout << "expression -> PAR_CLS expression PAR_CLS" << std::endl;
+		//$$ = $2;
 	}
 |
 	LOGIC_NOT expression
 	{
 		std::cout << "expression -> LOGIC_NOT expression" << std::endl;
+		// TODO: if expression is not boolean then error
+		//$$ = $2;
 	}
 |
 	expression LOGIC_AND expression
 	{
 		std::cout << "expression -> expression LOGIC_AND expression" << std::endl;
+		// TODO: if expression is not boolean then error
+		//$$ = $1;
 	}
 |
 	expression LOGIC_OR expression
 	{
 		std::cout << "logic_bin_op -> expression LOGIC_OR expression" << std::endl;
+		// TODO: if expression is not boolean then error
+		//$$ = $1;
 	}
 |
 	expression COMP_LS expression
 	{
 		std::cout << "logic_bin_op -> expression COMP_LS expression" << std::endl;
+		// TODO: if expression is not integer then error
+		//$$ = $1;
 	}
 |
 	expression COMP_GT expression
 	{
 		std::cout << "logic_bin_op -> expression COMP_GT expression" << std::endl;
+		// TODO: if expression is not integer then error
+		//$$ = $1;
 	}
 |
 	expression COMP_EQ expression
 	{
 		std::cout << "logic_bin_op -> expression COMP_EQ expression" << std::endl;
+		// TODO: if expression is not integer then error
+		//$$ = $1;
 	}
 ;
 
@@ -419,10 +407,12 @@ literal_boolean:
 	BOOLEAN_FALSE
 	{
 		std::cout << "literal_boolean -> BOOLEAN_FALSE" << std::endl;
+		//$$ = new Type(Boolean);
 	}
 |
 	BOOLEAN_TRUE
 	{
 		std::cout << "literal_boolean -> BOOLEAN_TRUE" << std::endl;
+		//$$ = new Type(Boolean);
 	}
 ;

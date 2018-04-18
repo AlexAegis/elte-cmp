@@ -11,6 +11,8 @@ enum Type {
 	Boolean
 };
 
+static const char* typeNames[] = { "Integer", "Boolean" };
+
 struct VarData {
 	int row;
 	Type type;
@@ -18,6 +20,12 @@ struct VarData {
 	VarData(int _row, Type _type) : row(_row), type(_type) {}
 	
 	VarData(){}
+
+	friend std::ostream & operator<<(std::ostream & _stream, VarData const & mc) {
+        _stream << "row: " << mc.row << " type: " << typeNames[mc.type];
+    }
 };
+
+
 
 #endif //SEMANTICS_H
