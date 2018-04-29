@@ -34,11 +34,11 @@
 
 %right LOGIC_NOT
 
-%token <value> BOOLEAN_TRUE
-%token <value> BOOLEAN_FALSE
+%token BOOLEAN_TRUE
+%token BOOLEAN_FALSE
 
 %token <value> VARIABLE
-%token <value> NUMBER
+%token NUMBER
 
 %type <type> types;
 %type <type> to_var;
@@ -80,6 +80,7 @@ statements_plus:
 prog_decl:
 	PROGRAM VARIABLE STMT_DOT {
 		std::cout << "prog_decl -> PROGRAM VARIABLE STMT_DOT" << std::endl;
+		delete $2;
 	}
 ;
 
@@ -116,6 +117,8 @@ var_line_core:
 		symbols[*$1] = VarData(d_loc__.first_line, *$3);
 
 		std::cout << "var_line -> VARIABLE (" << symbols[*$1] << ") TYPE TYPE_INTEGER" << std::endl;
+		delete $1;
+		delete $3;
 	}
 ;
 
@@ -190,18 +193,22 @@ statement_move:
 			ss << "Both end needs to have the same types. Got instead from: \"" << typeNames[*$2] << "\" to: " << typeNames[*$3];
 			error(ss.str().c_str());
 		}
+		delete $2;
+		delete $3;
 	}
 ;
 
 statement_read:
 	OP_READ to_var STMT_DOT {
 		std::cout << "statement_read -> OP_READ to_var STMT_DOT" << std::endl;
+		delete $2;
 	}
 ;
 
 statement_write:
 	OP_WRITE expression STMT_DOT {
 		std::cout << "statement_write -> OP_WRITE expression STMT_DOT" << std::endl;
+		delete $2;
 	}
 ;
 
@@ -222,6 +229,8 @@ statement_math_add:
 			std::cout << ss.str() << std::endl;
 			error(ss.str().c_str());
 		}
+		delete $2;
+		delete $3;
 	}
 ;
 
@@ -246,6 +255,8 @@ statement_math_sub:
 		}
 
 		std::cout << "statement_math_sub -> MATH_SUB expression DIR_FROM VARIABLE (" << symbols[*$4] << ") STMT_DOT" << std::endl;
+		delete $2;
+		delete $4;
 	}
 ;
 
@@ -270,6 +281,8 @@ statement_math_mult:
 		}
 
 		std::cout << "statement_math_mult -> MATH_MULT VARIABLE (" << symbols[*$2] << ") DIR_BY expression STMT_DOT" << std::endl;
+		delete $2;
+		delete $4;
 	}
 ;
 
@@ -294,6 +307,8 @@ statement_math_div:
 		}
 		
 		std::cout << "statement_math_div -> MATH_DIV VARIABLE (" << symbols[*$2] << ") DIR_BY expression STMT_DOT" << std::endl;
+		delete $2;
+		delete $4;
 	}
 ;
 
@@ -308,12 +323,20 @@ to_var:
 		}
 
 		$$ = new Type(symbols[*$2].type);
+		delete $2;
 	}
 ;
 
 struct_while:
-	STRUCT_WHILE VARIABLE STMT_DOT statements STRUCT_ENDWHILE STMT_DOT {
-		std::cout << "while -> STRUCT_WHILE statement STMT_DOT statements STRUCT_ENDWHILE STMT_DOT" << std::endl;
+	STRUCT_WHILE expression STMT_DOT statements STRUCT_ENDWHILE STMT_DOT {
+		std::cout << "while -> STRUCT_WHILE expression STMT_DOT statements STRUCT_ENDWHILE STMT_DOT" << std::endl;
+
+		if(*$2 != Boolean) {
+			std::stringstream ss;
+			ss << "Logic expression needs to be Boolean. \"" << *$2 << "\" got " << typeNames[*$2] << " instead of Boolean.";
+			error(ss.str().c_str());
+		}
+		delete $2;
 	}
 ;
 
@@ -332,6 +355,7 @@ logic_body:
 		}
 
 		std::cout << "logic_body -> expression STMT_DOT statements_plus" << std::endl;
+		delete $1;
 	}
 ;
 
@@ -381,6 +405,7 @@ expression:
 		std::cout << "expression -> VARIABLE (name: " << symbols[*$1] << " type: " <<  typeNames[symbols[*$1].type] << ")" << std::endl;
 
 		$$ = new Type(symbols[*$1].type);
+		delete $1;
 	}
 |
 	NUMBER {
@@ -392,11 +417,13 @@ expression:
 	literal_boolean {
 		std::cout << "expression -> literal_boolean" << std::endl;
 		$$ = new Type(*$1);
+		delete $1;
 	}
 |
 	PAR_OPN expression PAR_CLS {
 		std::cout << "expression -> PAR_CLS expression (" << typeNames[*$2] << ") PAR_CLS" << std::endl;
 		$$ = new Type(*$2);
+		delete $2;
 	}
 |
 	LOGIC_NOT expression {
@@ -409,6 +436,7 @@ expression:
 		std::cout << "expression -> LOGIC_NOT expression (" << typeNames[*$2] << ")" << std::endl;
 
 		$$ = new Type(*$2);
+		delete $2;
 	}
 |
 	expression LOGIC_AND expression {
@@ -427,6 +455,8 @@ expression:
 		std::cout << "expression -> expression  (" << typeNames[*$1] << ") LOGIC_AND expression  (" << typeNames[*$3] << ")" << std::endl;
 
 		$$ = new Type(*$1);
+		delete $1;
+		delete $3;
 	}
 |
 	expression LOGIC_OR expression {
@@ -445,6 +475,8 @@ expression:
 		std::cout << "expression -> expression  (" << typeNames[*$1] << ") LOGIC_OR expression  (" << typeNames[*$3] << ")" << std::endl;
 
 		$$ = new Type(*$1);
+		delete $1;
+		delete $3;
 	}
 |
 	expression COMP_LS expression {
@@ -463,6 +495,8 @@ expression:
 		std::cout << "expression -> expression (" << typeNames[*$1] << ") LOGIC_OR expression  (" << typeNames[*$3] << ")" << std::endl;
 
 		$$ = new Type(Boolean);
+		delete $1;
+		delete $3;
 	}
 |
 	expression COMP_GT expression {
@@ -480,6 +514,8 @@ expression:
 		std::cout << "expression -> expression (" << typeNames[*$1] << ") COMP_GT expression  (" << typeNames[*$3] << ")" << std::endl;
 
 		$$ = new Type(Boolean);
+		delete $1;
+		delete $3;
 	}
 |
 	expression COMP_EQ expression {
@@ -492,6 +528,8 @@ expression:
 		std::cout << "expression -> expression (" << typeNames[*$1] << ") COMP_EQ expression  (" << typeNames[*$3] << ")" << std::endl;
 
 		$$ = new Type(Boolean);
+		delete $1;
+		delete $3;
 	}
 ;
 
